@@ -1,0 +1,34 @@
+Any pointer p satisfies a 4-byte aligment
+A. struct P1 { int i; char c; int j; char d; };
+i = [0, 4)
+c = [4, 5)
+    [5, 8)
+j = [8, 12)
+d = [12, 13)
+    [13, 16)
+total = 16 bytes
+
+B. struct P2 { int i; char c; char d; long j; };
+i = [0, 4)
+c = [4, 5)
+d = [5, 6)
+    [6, 8)
+j = [8, 16)
+total = 16 bytes
+
+C. struct P3 { short w[3]; char c[3]; };
+w = [0, 6)
+c = [6, 9)
+    [9, 10)
+total = 10 bytes
+
+D. struct P4 { short w[5]; char *c[3]; };
+w = [0, 10)
+    [10, 16)
+c = [16, 40)
+total = 40
+
+E. struct P5 { struct P3 a[2]; struct P2 t};
+a = [0, 24)
+t = [24, 40)
+total = 40

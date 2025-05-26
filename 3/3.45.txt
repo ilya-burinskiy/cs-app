@@ -1,0 +1,47 @@
+struct {
+    char *a; // 8
+    short b; // 2
+    double c; // 8
+    char d; // 1
+    float e; // 4
+    char f; // 1
+    long g; // 8
+    int h; // 4
+}
+
+a = [0, 8)
+b = [8, 10)
+    [10, 6)
+c = [16, 24)
+d = [24, 25)
+    [25, 28)
+e = [28, 32)
+f = [32, 33)
+    [33, 40)
+g = [40, 48)
+h = [48, 52)
+
+A. offsets: 0, 8, 16, 24, 28, 32, 40, 48
+B. total size: 56
+
+struct {
+    char *a; // 8
+    double c; // 8
+    long g; // 8
+    float e; // 4
+    int h; // 4
+    short b; // 2
+    char f; // 1
+    char d; // 1
+}
+[0, 8)
+[8, 16)
+[16, 24)
+[24, 28)
+[28, 32)
+[32, 34)
+[34, 35)
+[35, 36)
+
+C. offsets: 0, 8, 16, 24, 28, 32, 34, 35
+   total size = 40
