@@ -1,0 +1,11 @@
+0 mod 8 = 0
+2 mod 8 = 2
+9 mod 8 = 1
+11 mod 8 = 3
+15 mod 8 = 7
+
+0 mod 8 = 0
+2 mod 8 = 2
+U2T((T2U(-7) mod 8) = U2T(9 mod 8) = U2T(1) = 1
+U2T((T2U(-5) mod 8) = U2T(11 mod 8) = U2T(3) = 3
+U2T((T2U(-1) mod 8) = U2T(15 mod 8) = U2T(7) = -1
