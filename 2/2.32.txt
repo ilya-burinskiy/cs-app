@@ -1,0 +1,6 @@
+int tsub_ok(int x, int y) {
+    return tadd_ok(x, -y)
+}
+
+y = TMin_32 = -2^31
+-y = y = TMin_32 = -2^31
