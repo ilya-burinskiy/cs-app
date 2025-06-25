@@ -1,0 +1,13 @@
+x*y = p + t*2^w if x*y overflows
+p = x*q + r
+q = y if and only if r = t = 0
+q = y <-> r = t = 0
+
+Достаточность q = y -> r = t = 0. Положим обратное q = y && (r != 0 || t != 0).
+x * y = (x * q + r) + t*2^w
+x * y = x * y + r + t*2^w
+r + t*2^w = 0, t >= 0 && r >= 0 -> r = t = 0
+
+Необходимость r = t = 0 -> q = y
+x * y = x * q
+q = y
