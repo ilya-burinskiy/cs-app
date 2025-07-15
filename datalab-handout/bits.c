@@ -218,9 +218,19 @@ int negate(int x) {
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 15
  *   Rating: 3
+ *  a > b
+ *  !((a + neg(b)) & neg_bit)
+ *  1 -> a > b
+ *  0 -> a < b
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int neg_0x30 = ~0x30 + 1;
+  int neg_x = ~x + 1;
+  int neg_bit = 1 << 31;
+  int x_gte_0x30 = !((x + neg_0x30) & neg_bit);
+  int _0x39_gte_x = !((0x39 + neg_x) & neg_bit);
+
+  return x_gte_0x30 & _0x39_gte_x;
 }
 /* 
  * conditional - same as x ? y : z 
