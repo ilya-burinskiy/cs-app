@@ -176,42 +176,28 @@ int isTmax(int x) {
  */
 int allOddBits(int x) {
   /*
-   * 0000 & 1010 = 0000
-   * 0001 & 1010 = 0000
-   * 0010 & 1010 = 0010
-   * 0011 & 1010 = 0010
-   * 0100 & 1010 = 0000
-   * 0101 & 1010 = 0000
-   * 0110 & 1010 = 0010
-   * 0111 & 1010 = 0010
-   * 1000 & 1010 = 1000
-   * 1001 & 1010 = 1000
-   * 1010 & 1010 = 1010
-   * 1011 & 1010 = 1010
-   * 1100 & 1010 = 1000
-   * 1101 & 1010 = 1000
-   * 1110 & 1010 = 1010
-   * 1111 & 1010 = 1010
-   * ((xbytes[i] & 0xAA) ^ 0xAA)
-   * 0 -> xbytes[i] & 0xAA == 0xAA
-   * otherwise -> xbytes[i] & 0xAA != 0xAA
    *
-   * !((xbytes[i] & 0xAA) ^ 0xAA)
-   * 1 -> xbytes[i] & 0xAA == 0xAA
-   * 0 -> xbytes[i] & 0xAA != 0xAA
+   * сколько 1 на нечетных позициях в байте. если b == 0, то
+   * таких битов 2, иначе b не равно нулю
+   * b = (x & m) ^ m 
+   * a ^ b = (a | b) & ~(a & b)
+   * ((x & m) | m) & ~((x & m) & m)
+   * (x & m0 | m0) & ~(x & m)
+   * m & ~(x & m)
+   * m & (~x | ~m)
+   * (m & ~x) | (m & ~m)
+   * (m & ~x)
    * */
-  char *xbytes = (char *) &x;
-  int odd_pos_bits_cnt = 0;
-  for (int i = 0; i < 4; i++) {
-    if (!((xbytes[i] & 0xAA) ^ 0xAA)) {
-      odd_pos_bits_cnt += 4;
-    }
-  }
-  if (odd_pos_bits_cnt != 16) {
-    return 0;
-  }
-
-  return 1;
+  int m0 = 0xAA;
+  int m1 = 0xAA << 8;
+  int m2 = 0xAA << 16;
+  int m3 = 0xAA << 24;
+  int negx = ~x;
+  int b0 = negx & m0;
+  int b1 = negx & m1;
+  int b2 = negx & m2;
+  int b3 = negx & m3;
+  return !(b0 | b1 | b2 | b3);
 }
 /* 
  * negate - return -x 
