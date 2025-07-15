@@ -175,7 +175,43 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  /*
+   * 0000 & 1010 = 0000
+   * 0001 & 1010 = 0000
+   * 0010 & 1010 = 0010
+   * 0011 & 1010 = 0010
+   * 0100 & 1010 = 0000
+   * 0101 & 1010 = 0000
+   * 0110 & 1010 = 0010
+   * 0111 & 1010 = 0010
+   * 1000 & 1010 = 1000
+   * 1001 & 1010 = 1000
+   * 1010 & 1010 = 1010
+   * 1011 & 1010 = 1010
+   * 1100 & 1010 = 1000
+   * 1101 & 1010 = 1000
+   * 1110 & 1010 = 1010
+   * 1111 & 1010 = 1010
+   * ((xbytes[i] & 0xAA) ^ 0xAA)
+   * 0 -> xbytes[i] & 0xAA == 0xAA
+   * otherwise -> xbytes[i] & 0xAA != 0xAA
+   *
+   * !((xbytes[i] & 0xAA) ^ 0xAA)
+   * 1 -> xbytes[i] & 0xAA == 0xAA
+   * 0 -> xbytes[i] & 0xAA != 0xAA
+   * */
+  char *xbytes = (char *) &x;
+  int odd_pos_bits_cnt = 0;
+  for (int i = 0; i < 4; i++) {
+    if (!((xbytes[i] & 0xAA) ^ 0xAA)) {
+      odd_pos_bits_cnt += 4;
+    }
+  }
+  if (odd_pos_bits_cnt != 16) {
+    return 0;
+  }
+
+  return 1;
 }
 /* 
  * negate - return -x 
