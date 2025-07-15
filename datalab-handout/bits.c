@@ -238,9 +238,11 @@ int isAsciiDigit(int x) {
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 16
  *   Rating: 3
+ *   x && y || !x && z
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  int cond = ~(!!x) + 1;
+  return (cond & y) | (~cond & z);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
