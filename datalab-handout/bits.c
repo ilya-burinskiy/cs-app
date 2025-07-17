@@ -245,6 +245,7 @@ int conditional(int x, int y, int z) {
   return (cond & y) | (~cond & z);
 }
 /* 
+ * число операторов 27
  * isLessOrEqual - if x <= y  then return 1, else return 0 
  *   Example: isLessOrEqual(4,5) = 1.
  *   Legal ops: ! ~ & ^ | + << >>
@@ -252,35 +253,29 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  /*
-   * x, y < 0
-   * x, y > 0
-   * x > 0, y < 0
-   * y > 0, x < 0
-   */
-    int tmin = 1 << 31;
-    int x_less_0 = (x & tmin) >> 31;
-    int y_less_0 = (y & tmin) >> 31;
-    int x_gte_0 = ~x_less_0;
-    int y_gte_0 = ~y_less_0;
-    int x_eq_tmin = ~(!(x ^ tmin)) + 1;
-    int neg_x = (x_eq_tmin & tmin) | (~x_eq_tmin & (~x + 1));
-    int y_gte_x = !((y + neg_x) & tmin);
-    int res = (((x_gte_0 & y_gte_0) | (x_less_0 & y_less_0)) & y_gte_x)
-              | (x_less_0 & y_gte_0 & 1);
-    return res;
+  int tmin = 1 << 31;
+  int x_less_0 = (x & tmin) >> 31;
+  int y_less_0 = (y & tmin) >> 31;
+  int x_gte_0 = ~x_less_0;
+  int y_gte_0 = ~y_less_0;
+  int x_eq_tmin = ~(!(x ^ tmin)) + 1;
+  int neg_x = (x_eq_tmin & tmin) | (~x_eq_tmin & (~x + 1));
+  int y_gte_x = !((y + neg_x) & tmin);
+  int res = (((x_gte_0 & y_gte_0) | (x_less_0 & y_less_0)) & y_gte_x)
+            | (x_less_0 & y_gte_0 & 1);
+  return res;
 }
 //4
-/* 
+/*
+ * с подской
  * logicalNeg - implement the ! operator, using all of 
  *              the legal operators except !
  *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
  *   Legal ops: ~ & ^ | + << >>
  *   Max ops: 12
- *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+  return ((x | (~x + 1)) >> 31) + 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
