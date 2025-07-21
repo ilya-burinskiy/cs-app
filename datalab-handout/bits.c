@@ -290,7 +290,230 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  int bits_required = 32;
+  int mask = 1 << 31;
+  int msb = x & mask;
+  int stop = 0;
+  int masked_x_eq_msb, is_finished, cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  
+  stop = !cond;
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  
+  stop = !cond;
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+
+  stop = !cond;
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+
+  stop = !cond;
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+
+  stop = !cond;
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+
+  stop = !cond;
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+
+  stop = !cond;
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  x = x << 1;
+  masked_x_eq_msb = ~(!((x & mask) + ~msb + 1)) + 1;
+  is_finished = ~(!stop) + 1;
+  cond = masked_x_eq_msb & is_finished;
+  bits_required = (cond & (bits_required + ~0)) | (~cond & bits_required);
+  stop = !cond;
+
+  return bits_required;
 }
 //float
 /* 
