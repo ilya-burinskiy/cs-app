@@ -1,0 +1,58 @@
+src_t  *sp;
+dest_t *dp;
+*dp = (dest_t) *sp
+Assume than values of sp and dp stored in %rdi and %rsi.
+First instruction shoud read from mem? do the appropriate conversion, and set
+the appropriate portion of register %rax. The second instruction should then write
+the appropriate portiion of %rax to memory. Recall that when performing a cast that
+involves both a size change and a change of "signedness" in C, the operation should
+change the size first.
+
+long *sp;
+long *dp;
+*dp = (long) *sp
+Instruction:
+movq (%rdi), %rax
+movq %rax, (%rsi)
+
+char *sp;
+int *dp;
+*dp = (int) *sp;
+Instruction:
+movsbl (%rdi), %eax (+)
+movl %eax, (%rsi) (+)
+
+char *sp;
+unsigned *dp;
+*dp = (unsigned) *sp; // *dp = (unsigned) (int) *sp;
+Instruction:
+movsbl (%rdi), %eax (+)
+movl %eax, (%rsi) (+)
+
+unsigned char *sp;
+long *dp;
+*dp = (long) *sp;
+Instruction:
+movzbq (%rdi), %rax (-) // movzbl (%rdi), %eax
+movq %rax, (%rsi) (+)
+
+int *sp;
+char *dp;
+*dp = (char) *sp;
+Instruction:
+movb (%rdi), %al (-) // movl (%rdi), %eax
+movb %al, (%rsi) (+)
+
+unsigned *sp;
+unsigned char *dp;
+*dp = (unsigned char) *sp;
+Instruction:
+movb (%rdi), %al (-) // movl (%rdi), %eax
+movb %al, (%rsi) (+)
+
+char *sp;
+short *dp;
+*dp = (short) *sp;
+Instruction:
+movsbw (%rdi), %ax (+)
+movw %ax, (%rsi) (+)
