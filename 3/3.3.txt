@@ -1,0 +1,7 @@
+movb $0xF, (%ebx) // cannot use %ebx as address register -
+movl %rax, (%rsp) // rax, rsp - 64 bit, movl - 32 bit    +
+movw (%rax), 4(%rsp) // memory to memory not allowed     +
+movb %al, %sl // sl нет такого регистра                  +
+movq %rax, $0x123 // immediate can not be destination    +
+movl %eax, %rdx // rdx - 16 bit, movl - 32 bit           +
+movb %si, 8(%rbp) // si - 16 bit, movb - 8 bit           +
