@@ -1,0 +1,10 @@
+%rbx = p
+%rdx = q
+
+Instruction                Result
+leaq 9(%rdx), %rax         q + 9
+leaq (%rdx,%rbx), %rax     q + p
+leaq (%rdx,%rbx,3) %rax    q + 3*p
+leaq 2(%rbx,%rbx,7), %rax  8*p + 2
+leaq 0xE(,%rdx,3), %rax    3*q + 0xE
+leaq 6(%rbx,%rdx,7), %rax  p + 7*q + 6
