@@ -1,0 +1,26 @@
+int comp(data_t a, data_t b) {
+  return a COMP b;
+}
+
+a in some portion of %rdx, b in some portion of %rsi
+
+A. cmpl %esi, %edi # %edi - %esi, a - b
+   setl %al        # a < b
+data_t = int (+)
+COMP = < (+)
+
+B. cmpw %si, %di # %di - %si, a - b
+   setge %al     # >=
+data_t = short (+)
+COMP = >= (+)
+
+
+C. cmpb %sil, %dil
+   setbe %al
+data_t = unsigned char (+)
+COMP = <= (+)
+
+D. cmpq %rsi, %rdi
+   setne %al
+data_t = long (+-) unsigned long, ptr
+COMP = != (+)
