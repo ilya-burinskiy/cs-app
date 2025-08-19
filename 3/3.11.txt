@@ -1,0 +1,7 @@
+xorq %rcx, %rcx
+
+A. обнулить регист %rcx
+B. movq $0, %rcx
+C. xorq = 3 bytes, movq = 7 bytes
+
+xorl %ecx, %ecx (2 байта) или movl $0, %ecx (5 байт)
