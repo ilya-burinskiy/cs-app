@@ -1,0 +1,71 @@
+Format A
+  1 sign bit
+  5 exp bits. bias 15
+  3 frac bits
+Format B
+  1 sign bit
+  4 exp bits. bias is 7
+  4 frac bits
+
+Rounding toward +inf
+-14 <= Ea <= 15
+-6 <= Eb <= 7
+
+Format A
+  Bits = 1 01111 001
+  Value = -(1 + 1/8) * 2^(15 - 15) = - 9/8 
+Format B
+  Value = -(1 + 1/8)
+  Bits = 1 0111 0010
+
+Format A
+  Bits = 0 10110 011
+  Value = (1 + 3/8) * 2^7 = 128 + 48 = 176
+  E = 22 - 15 = 7
+  M = 1.0 + 1/4 + 1/8 = 1 + 3/8
+Format B
+  Value = 176
+  1011 0000 = 1.011 * 10^7
+  e = 7 + 7 = 14
+  f = 0.011
+  Bits = 0 1110 0110
+
+Format A
+  Bits: 1 00111 010
+  E = 7 - 15 = -8
+  M = 1 + 1/5 = 5/4
+  Value = -(5/4 * 2^-8) = -5/1024
+Format B
+  -5/1024 = -(101 * 10^-10) = -0.0101 * 10^-6
+  Value = -5/1024
+  Bits = 1 0000 0101
+
+Format A
+  Bits 0 00000 111
+  E = 1 - Bias = -14
+  M = 1/2 + 1/4 + 1/8 = 7/8
+  Value: 7/8 * 2^-14 = 7/2^17
+Format B
+  111 * 10^-17 = 0.111 * 10^-14 = 0.0000111 * 10^-10
+  ceil(0.0000111) = 0.0001
+  Value = 2^-10
+  Bits = 0 0000 0001
+
+Format A
+  Bits = 1 11100 000
+  E = 28 - 15 = 13
+  V = -2^13
+Format B
+  -(1.1111 * 10^7) = -(11111 * 10^3)
+  Value = 31 * 2^3 = -248
+  Bits = 1 1110 1111
+
+Format A
+  Bits = 0 10111 100
+  E = 23 - 15 = 8
+  M = 3/2
+  V = 3/2 * 2^8 = 384
+Format B
+  Bits = 0 1111 0000
+  Value = inf
+
