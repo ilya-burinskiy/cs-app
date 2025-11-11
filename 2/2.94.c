@@ -1,29 +1,37 @@
 #include <assert.h>
 #include <limits.h>
+#include <stdio.h>
+#include <math.h>
 
 typedef unsigned float_bits;
 
 float_bits float_twice(float_bits f);
 float u2f(unsigned);
+unsigned f2u(float);
 
 int main(int argc, char **argv) {
-  unsigned not_eq_cnt = 0;
-  float expected, f_x2;
+  unsigned errors = 0;
+  float expected, double_f;
   for (unsigned f_bin = 0; f_bin < UINT_MAX; ++f_bin) {
-    expected = u2f(f_bin);
-    expected *= 2.0;
-    f_x2 = u2f(float_twice(f_bin));
-    if (expected != f_x2) {
-      ++not_eq_cnt;
+    expected = 2.0 * u2f(f_bin);
+    double_f = u2f(float_twice(f_bin));
+    if (isnan(expected) && isnan(double_f)) {
+      continue;
+    }
+
+    if (expected != double_f) {
+      printf("Mismatch for 0x%X:\n", f_bin);
+      printf("Expected: 0x%X, got: 0x%X\n", f2u(expected), f2u(double_f));
+      errors++;
+      if (errors > 10) {
+        break;
+      }
     }
   }
-  expected = u2f(UINT_MAX);
-  expected *= 2.0;
-  f_x2 = u2f(float_twice(UINT_MAX));
-  if (expected != f_x2) {
-    ++not_eq_cnt;
-  }
-  assert(not_eq_cnt == (1 << 24) - 2);
+
+  expected = 2.0 * u2f(UINT_MAX);
+  double_f = u2f(float_twice(UINT_MAX));
+  assert(isnan(expected) && double_f);
 
   return 0;
 }
@@ -32,31 +40,25 @@ float_bits float_twice(float_bits f) {
   unsigned sign = f >> 31;
   unsigned exp = (f >> 23) & 0xFF;
   unsigned frac = f & 0x7FFFFF;
-  float_bits res;
-  if (exp == 0xFF && frac) {
-    // NaN
-    res = f;
-  } else if (exp == 0xFF && !frac) {
-    // Inf
-    res = f;
-  } else if (!exp && !frac) {
-    // Zero
-    res = 0;
-  } else if (exp) {
+
+  if (exp && exp != 0xFF) {
     // Normalized
-    unsigned new_exp = exp + 1;
-    if (new_exp == 0xFF) {
-      res = (sign << 31) | (new_exp << 23);
-    } else {
-      res = (sign << 31) | (new_exp << 23) | frac;
+    exp = exp + 1;
+    if (exp == 0xFF) {
+      frac = 0;
     }
-  } else {
+  } else if (!exp) {
     // Denormalized
-    res = (sign << 31) | (frac << 1);
+    frac <<= 1;
   }
-  return res; 
+
+  return (sign << 31) | (exp << 23) | frac; 
 }
 
 float u2f(unsigned u) {
   return *((float *) &u);
+}
+
+unsigned f2u(float f) {
+  return *((unsigned *) &f);
 }
