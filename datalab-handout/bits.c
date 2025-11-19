@@ -336,7 +336,54 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+  unsigned sign = uf >> 31;
+  unsigned exp = (uf >> 23) & 0xFF;
+  unsigned frac = uf & 0x7FFFFF;
+  int res;
+  if (exp && exp != 0xFF) {
+    // Normalized
+    int e = exp - 127;
+    if (e < 0) {
+      res = 0;
+    } else if (sign == 0 && e == 0) {
+      res = 1;
+    } else if (sign == 0 && e < 31) {
+      // ~(x | -x) - слово с единицами в позициях завершающих нулевых битов
+      // и с нулевыми битами во всех остальных местах
+      int shift_val = ~(frac | -frac);
+      shift_val = (shift_val & 0x55555555) + ((shift_val >> 1) & 0x55555555);
+      shift_val = (shift_val & 0x33333333) + ((shift_val >> 2) & 0x33333333);
+      shift_val = (shift_val & 0x0F0F0F0F) + ((shift_val >> 4) & 0x0F0F0F0F);
+      shift_val = (shift_val & 0x00FF00FF) + ((shift_val >> 8) & 0x00FF00FF);
+      shift_val = (shift_val & 0x0000FFFF) + ((shift_val >> 16) & 0x0000FFFF);
+      shift_val = 23 - shift_val;
+      frac >>= shift_val;
+      res = (1 << e) + (1 << (e - shift_val)) * frac;
+    } else if (sign == 0 && e >= 31) {
+      res = 0x80000000;
+    } else if (sign == 1 && e == 0) {
+      res = -1;
+    } else if (sign == 1 && e <= 31) {
+      int shift_val = ~(frac | -frac);
+      shift_val = (shift_val & 0x55555555) + ((shift_val >> 1) & 0x55555555);
+      shift_val = (shift_val & 0x33333333) + ((shift_val >> 2) & 0x33333333);
+      shift_val = (shift_val & 0x0F0F0F0F) + ((shift_val >> 4) & 0x0F0F0F0F);
+      shift_val = (shift_val & 0x00FF00FF) + ((shift_val >> 8) & 0x00FF00FF);
+      shift_val = (shift_val & 0x0000FFFF) + ((shift_val >> 16) & 0x0000FFFF);
+      shift_val = 23 - shift_val;
+      frac >>= shift_val;
+      res = -((1 << e) + (1 << (e - shift_val)) * frac);
+    } else if (sign == 1 && e > 31) {
+      res = 0x80000000;
+    }
+  } else if (!exp) {
+    // Denormalized
+    res = 0;
+  } else {
+    // Inf or NaN
+    res = 1 << 31;
+  }
+  return res;
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
