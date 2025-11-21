@@ -6,7 +6,6 @@ typedef unsigned float_bits;
 
 int float_f2i(float_bits f);
 float u2f(unsigned u);
-int pop(unsigned x);
 
 int main(int argc, char **argv) {
   // Inf, -Inf
@@ -57,51 +56,26 @@ Exit:
 int float_f2i(float_bits f) {
   unsigned sign = f >> 31;
   unsigned exp = (f >> 23) & 0xFF;
+  int exp_biased = exp - 127;
   unsigned frac = f & 0x7FFFFF;
   int res;
-  if (exp && exp != 0xFF) {
-    // Normalized
-    int e = exp - 127;
-    if (e < 0) {
-      res = 0;
-    } else if (sign == 0 && e == 0) {
-      res = 1;
-    } else if (sign == 0 && e < 31) {
-      // ~(x | -x) - слово с единицами в позициях завершающих нулевых битов
-      // и с нулевыми битами во всех остальных местах
-      int shift_val = 23 - pop(~(frac | -frac));
-      frac >>= shift_val;
-      res = (1 << e) + (1 << (e - shift_val)) * frac;
-    } else if (sign == 0 && e >= 31) {
-      res = 0x80000000;
-    } else if (sign == 1 && e == 0) {
-      res = -1;
-    } else if (sign == 1 && e <= 31) {
-      int shift_val = 23 - pop(~(frac | -frac));
-      frac >>= shift_val;
-      res = -((1 << e) + (1 << (e - shift_val)) * frac);
-    } else if (sign == 1 && e > 31) {
-      res = 0x80000000;
-    }
-  } else if (!exp) {
-    // Denormalized
+  if (exp_biased < 0) {
     res = 0;
+  } else if (exp_biased < 31) {
+    int diff = exp_biased - 23;
+    if (diff >= 0) {
+      res = (1 << exp_biased) | (frac << diff);
+    } else if (diff < 0) {
+      res = (1 << exp_biased) | (frac >> -diff);
+    }
+    res = sign ? -res : res;
   } else {
-    // Inf or NaN
-    res = 1 << 31;
+    res = 0x80000000;
   }
+
   return res;
 }
 
 float u2f(unsigned u) {
   return *((float *) &u);
-}
-
-int pop(unsigned x) {
-  x = (x & 0x55555555) + ((x >> 1) & 0x55555555);
-  x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
-  x = (x & 0x0F0F0F0F) + ((x >> 4) & 0x0F0F0F0F);
-  x = (x & 0x00FF00FF) + ((x >> 8) & 0x00FF00FF);
-  x = (x & 0x0000FFFF) + ((x >> 16) & 0x0000FFFF);
-  return x;
 }

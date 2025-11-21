@@ -338,51 +338,23 @@ unsigned floatScale2(unsigned uf) {
 int floatFloat2Int(unsigned uf) {
   unsigned sign = uf >> 31;
   unsigned exp = (uf >> 23) & 0xFF;
+  int exp_biased = exp - 127;
   unsigned frac = uf & 0x7FFFFF;
   int res;
-  if (exp && exp != 0xFF) {
-    // Normalized
-    int e = exp - 127;
-    if (e < 0) {
-      res = 0;
-    } else if (sign == 0 && e == 0) {
-      res = 1;
-    } else if (sign == 0 && e < 31) {
-      // ~(x | -x) - слово с единицами в позициях завершающих нулевых битов
-      // и с нулевыми битами во всех остальных местах
-      int shift_val = ~(frac | -frac);
-      shift_val = (shift_val & 0x55555555) + ((shift_val >> 1) & 0x55555555);
-      shift_val = (shift_val & 0x33333333) + ((shift_val >> 2) & 0x33333333);
-      shift_val = (shift_val & 0x0F0F0F0F) + ((shift_val >> 4) & 0x0F0F0F0F);
-      shift_val = (shift_val & 0x00FF00FF) + ((shift_val >> 8) & 0x00FF00FF);
-      shift_val = (shift_val & 0x0000FFFF) + ((shift_val >> 16) & 0x0000FFFF);
-      shift_val = 23 - shift_val;
-      frac >>= shift_val;
-      res = (1 << e) + (1 << (e - shift_val)) * frac;
-    } else if (sign == 0 && e >= 31) {
-      res = 0x80000000;
-    } else if (sign == 1 && e == 0) {
-      res = -1;
-    } else if (sign == 1 && e <= 31) {
-      int shift_val = ~(frac | -frac);
-      shift_val = (shift_val & 0x55555555) + ((shift_val >> 1) & 0x55555555);
-      shift_val = (shift_val & 0x33333333) + ((shift_val >> 2) & 0x33333333);
-      shift_val = (shift_val & 0x0F0F0F0F) + ((shift_val >> 4) & 0x0F0F0F0F);
-      shift_val = (shift_val & 0x00FF00FF) + ((shift_val >> 8) & 0x00FF00FF);
-      shift_val = (shift_val & 0x0000FFFF) + ((shift_val >> 16) & 0x0000FFFF);
-      shift_val = 23 - shift_val;
-      frac >>= shift_val;
-      res = -((1 << e) + (1 << (e - shift_val)) * frac);
-    } else if (sign == 1 && e > 31) {
-      res = 0x80000000;
-    }
-  } else if (!exp) {
-    // Denormalized
+  if (exp_biased < 0) {
     res = 0;
+  } else if (exp_biased < 31) {
+    int diff = exp_biased - 23;
+    if (diff >= 0) {
+      res = (1 << exp_biased) | (frac << diff);
+    } else if (diff < 0) {
+      res = (1 << exp_biased) | (frac >> -diff);
+    }
+    res = sign ? -res : res;
   } else {
-    // Inf or NaN
-    res = 1 << 31;
+    res = 0x80000000;
   }
+
   return res;
 }
 /* 
