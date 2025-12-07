@@ -1,0 +1,23 @@
+int test(data_t a) {
+  return a TEST 0;
+}
+
+A. testq %rdi, %rdi
+   setge %al
+data_t = long (+)
+TEST = >= (+)
+
+B. testw %di, %di
+   sete %al
+data_t = short, unsigned short (+-)
+TEST = == (+)
+
+C. testb %dil, %dil
+   seta %al
+data_t = unsigned char (+)
+TEST = > (+)
+
+D. testl %edi, %edi
+   setle %al
+data_t = int (+) 
+TEST = <= (проверить)
