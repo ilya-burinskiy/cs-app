@@ -5,22 +5,11 @@ typedef unsigned float_bits;
 
 float_bits float_i2f(int i);
 
-/*
- * 110000000
- * */
-
 int main() {
   unsigned errors = 0;
   float f_expected;
   float_bits f_bin, f_bin_expected;
-  // for (int i = 0; i < INT_MAX; ++i) {
-    // int i = 0x1000000;
-    // int i = 0x1000003;
-    // int i = 0x2000006;
-    // int i = 0x1000006;
-    // int i = 0x2000003;
-    // int i = 0x80000000;
-    int i = 0x80000100;
+  for (int i = 0; i < INT_MAX; ++i) {
     f_bin = float_i2f(i);
     f_expected = (float) i;
     f_bin_expected = *((float_bits *) &f_expected);
@@ -32,11 +21,11 @@ int main() {
         f_bin, *((float *) &f_bin)
       );
       errors++;
-      // if (errors > 10) {
-      //   break;
-      // }
+      if (errors > 10) {
+        break;
+      }
     }
-  // }
+  }
 
   return 0;
 }
