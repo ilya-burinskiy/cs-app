@@ -11,6 +11,7 @@
  *   cmpq $2, %rsi            # cmp y:2
  *   jle .L3                  # if <= goto .L3
  *   movq %rdi, %rax          # rax <- x
+ *   cqto
  *   idivq %rdx               # rax <- x / z
  *   ret
  * .L3:
@@ -21,6 +22,7 @@
  *   cmpq $3, %rdx            # cmp z:3
  *   jge .L4                  # if <= goto .L4
  *   movq %rdx, %rax          # rax <- z
+ *   cqto
  *   idivq %rsi               # rax <- z / y
  * .L4:
  *   rep; ret
