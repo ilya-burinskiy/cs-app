@@ -1,0 +1,13 @@
+p = 0.5
+T_avg(p) = (1-p)*T_ok + p*T_mp = T_ok + p*T_mp
+T_ran = T_avg(0.5) = 17.5
+
+T_mp = (T_avg(p) - T_ok) / p
+T_mp = (T_avg(p) - T_ok) / p
+
+A. +
+45 cycles - T_ran
+25 cycles - T_ok
+T_mp = 2*(45 - 25) = 40
+B. +
+T_ok + T_mp = 65
