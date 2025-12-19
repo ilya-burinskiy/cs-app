@@ -1,0 +1,106 @@
+rdi <- u
+rsi <- v
+0..0400540 <last>:
+  400540: 48 89 f8        mov %rdi,%rax         L1: u
+  400543: 48 0f af c6     imul %rsi,%rax        L2: u*v
+  400547: c3              retq                  L3: return
+
+rdi <- x
+0..0400548 <first>:
+  400548: 48 89 f8        lea 0x1(%rdi),%rsi    F1: x+1
+  40054c: 28 83 ef 01     sub $0x1,%rdi         F2: x-1
+  400550: e8 eb ff ff ff  callq 400540 <last>   F3: Call last(x-1, x+1)
+  400555: f3 c3           repz retq             F4: Return
+  ...
+  400560: e8 e3 ff ff ff  callq 400548 <first>  M1: Call first(10)
+  400565: 48 89 c2        mov %rax,%rdx         M2: Resume
+
+Label:       M1
+PC:          400560
+Instruction: callq
+%rdi:        10
+%rsi:        -
+%rax:        -
+%rsp:        0x7fffffffe820
+*%rsp:       -
+Description: Call first(10)
+
+Label:       F1
+PC:          400548
+Instruction: lea
+%rdi:        10
+%rsi:        -
+%rax:        -
+%rsp:        0x7fffffffe818
+*%rsp:       0x400565
+Description: Entry of first
+
+Label:       F2
+PC:          40054c
+Instruction: sub
+%rdi:        10
+%rsi:        11
+%rax:        -
+%rsp:        0x7fffffffe818
+*%rsp:       0x400565
+Description: x-1
+
+Label:       F3
+PC:          400550
+Instruction: callq
+%rdi:        9
+%rsi:        11
+%rax:        -
+%rsp:        0x7fffffffe818
+*%rsp:       0x400565
+Description: Call last
+
+Label:       L1
+PC:          400540
+Instruction: mov
+%rdi:        9
+%rsi:        11
+%rax:        -
+%rsp:        0x7fffffffe810
+*%rsp:       0x400555
+Description: Mov rdi to rax
+
+Label:       L2
+PC:          400543
+Instruction: imul
+%rdi:        9
+%rsi:        11
+%rax:        9
+%rsp:        0x7fffffffe810
+*%rsp:       0x400555
+Description: Mul rax with rsi
+
+Label:       L3
+PC:          400547
+Instruction: retq
+%rdi:        9
+%rsi:        11
+%rax:        99
+%rsp:        0x7fffffffe810
+*%rsp:       0x400555
+Description: return to first
+
+Label:       F4
+PC:          400555
+Instruction: retq
+%rdi:        9
+%rsi:        11
+%rax:        99
+%rsp:        0x7fffffffe818
+*%rsp:       0x400565
+Description: return to main
+
+Label:       M2
+PC:          400565
+Instruction: mov
+%rdi:        9
+%rsi:        11
+%rax:        99
+%rsp:        0x7fffffffe820
+*%rsp:       -
+Description: mov rax to rdx
