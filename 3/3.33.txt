@@ -1,0 +1,16 @@
+int procprob() {
+  *u = *u + a;
+  *v = *v + b;
+  return sizeof(a) + siezeof(b);
+}
+
+edi <- a (4 bytes)
+rsi <- b (6-4=2 bytes) 
+rdx <- u (pointer to 8 bytes value)
+rcx <- v (pointer to 1 byte value)
+procprob:
+  movsql %edi, %rdi   # rdi <- SignExtend(edi)
+  addq %rdi, (%rdx)   # *rdx <- *rdx + rdi
+  addb %sil, (%rcx)   # *rcx <- *rcx + %sil (byte rsi)
+  movl $6, %eax
+  ret
