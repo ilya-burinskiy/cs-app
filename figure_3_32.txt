@@ -1,0 +1,12 @@
+   7 6 5 4 3 2 1 0
+31 0 0 0 0 0 0 0 1 24
+23 0 0 0 2 0 3 4 . 16
+15 x x x x x x x x 08
+07 . . . . 0 0 0 4 00 <- rsp
+
+M[rsp + 24] = x1 = 1        (8 bytes) 
+M[rsp + 20] = x2 = 2        (4 bytes)
+M[rsp + 18] = x3 = 3        (2 bytes)
+M[rsp + 17] = x4 = 4        (1 byte)
+M[rsp + 8] = &x4 = rsp + 17 (8 bytes) arg 8
+M[rsp] = x4 = 4             (1 byte)  arg 7
