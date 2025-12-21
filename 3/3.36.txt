@@ -1,0 +1,35 @@
+short S[7];
+short *T[3];
+short **U[6];
+int V[8];
+double *W[4];
+
+Array:         S
+Element size:  2
+Total size:    14
+Start address: x_S
+Element i:     x_S + 2*i
+
+Array:         T
+Element size:  8
+Total size:    24
+Start address: x_T
+Element i:     x_T + 8*i
+
+Array:         U
+Element size:  8
+Total size:    48
+Start address: x_U
+Element i:     x_U + 8*i
+
+Array:         V
+Element size:  4
+Total size:    32
+Start address: x_V
+Element i:     x_V + 4*i
+
+Array:         W
+Element size:  8
+Total size:    32
+Start address: x_W
+Element i:     x_W + 8*i
