@@ -1,0 +1,31 @@
+# long P(long x)
+# x in rdi
+# stack:
+#   7 6 5 4 3 2 1 0
+#   x x x x x x x x <-rsp+8 (x+7)
+#   x x x x x x x x <-rsp (x+6)
+P:
+  pushq %r15          # save r15
+  pushq %r14          # save r14
+  pushq %r13          # save r13
+  pushq %r12          # save r12
+  pushq %rbp          # save rbp
+  pushq %rbx          # save rbx
+  subq $24, %rsp      # rsp <- rsp-24
+  movq %rdi, %rbx     # rbx <- x
+  leaq 1(%rdi), %r15  # r15 <- x+1
+  leaq 2(%rdi), %r14  # r14 <- x+2
+  leaq 3(%rdi), %r13  # r13 <- x+3
+  leaq 4(%rdi), %r12  # r12 <- x+4
+  leaq 5(%rdi), %rbp  # rbp <- x+5
+  leaq 6(%rdi), %rax  # rax <- x+6
+  movq %rax, (%rsp)
+  leaq 7(%rdi), %rdx  # rdx <- x+7
+  movq %rdx, 8(%rsp)
+  movl $0, %eax       # eax <- 0
+  call Q
+  # ...
+
+# A. x, x+1, x+2, x+3, x+4, x+5; +
+# B. x+6, x+7; +
+# C. локальных переменных больше чем callee регистров; +
