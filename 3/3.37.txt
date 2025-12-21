@@ -1,0 +1,35 @@
+x_S - addr of short integer array S;
+rdx <- x_S
+rcx <- i
+rax <- res if res is ptr
+ax <- res if res is short int
+
++
+Expression:    S+1
+Type:          *short
+Value:         x_S + 2
+Assembly code: leaq 2(%rdx),%rax
+
++
+Expression:    S[3]
+Type:          short
+Value:         M[x_S + 3*2]
+Assembly code: movw 6(%rdx),%ax
+
++
+Expression:    &S[i]
+Type:          *short
+Value:         x_S + i*2
+Assembly code: leaq (%rdx,%rcx,2),%rax
+
++
+Expression:    S[4*i+1]
+Type:          short
+Value:         M[x_S + 8*i + 2]
+Assembly code: movw 2(%rdx,%rcx,8),%rax
+
++
+Expression:    S+i-5
+Type:          *short
+Value:         x_S + 2*i - 10
+Assembly code: leaq -10(%rdx,%rcx,2),%rax
