@@ -1,0 +1,6 @@
+#define N 16
+typedef int fix_matrix[N][N];
+
+int *Aptr = &A[i][0]; /* x_A + 4*(i*16 + 0); x_A + 64*i */
+int *Bptr = &B[0][k]; /* x_B + 4*(0*16 + k); x_B + 4*k */
+int *Bend = &B[N][k]; /* x_B + 4*(16*16 + k); x_B + 4*k + 1024 */
