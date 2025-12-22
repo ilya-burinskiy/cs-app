@@ -1,0 +1,60 @@
+typedef union {
+  struct {
+    long u;   // 0
+    short v;  // 8
+    char w;   // 10
+  } t1;
+  struct {
+    int a[2]; // 0
+    char *p;  // 8
+  } t2;
+} u_type;
+
+void get(u_type *up, type *dest) {
+  *dest = expr;
+}
+
++
+expr: up->t1.u
+type: long
+code:
+  movq (%rdi), %rax
+  movq %rax, (%rsi)
+
++
+expr: up->t1.v
+type: short
+code:
+  movw 8(%rdi), %ax
+  movw %ax, (%rsi)
+
++-
+expr: &up->t1.w
+type: char *
+code:
+  leaq 10(%rdi), %rax       addq $10, %rdi
+  movq %rax, (%rsi)         movq %rdi, (%rsi)
+
+-
+expr: up->t2.a
+type: int *
+code:
+  movq (%rdi), %rax
+  movq %rax, (%rsi)
+code': movq %rdi, (%rsi)
+
++
+expr: up->t2.a[up->t1.u]
+type: int
+code:
+  movq (%rdi), %rax           rax <- up->t1.u
+  movl (%rdi, %rax, 4), %eax  eax <- up->t2[up->t1.u]
+  movl %eax, (%rsi)
+
++
+expr: *up->t2.p
+type: char
+code:
+  movq 8(%rdi), %rax          rax <- M[rdi + 8]
+  movb (%rax), %al
+  movb %al, (%rsi)
