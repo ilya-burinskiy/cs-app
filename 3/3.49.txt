@@ -1,0 +1,66 @@
+s1 - rsp after `subq $16, %rsp`
+s2 - rsp after `subq %rax, %rsp`
+p - value assigned to %r8 and %rcx
+  leaq 0(,%rax,8), %r8
+  movq %r8, %rcx
+
+A.
+  leaq 22(,%rdi,8), %rax
+  andq $-16, %rax
+  subq %rax, %rsp
+
+x = sum(x_i * 2^i, i = [0, n))
+  = sum(x_i * 2^i, i = [0, 4)) + sum(x_i * 2^i, i = [4, n))
+  = s1 + s2
+
+s1 <= 2^4 - 1
+-s1 >= -2^4+1
+
+x & (-16) = x - s1 >= x-2^4+1
+(22 + n * 8) & (-16) >= 22 + n * 8 - 16 + 1
+(22 + n * 8) & (-16) >= 8*n+7 > 8*n
+Выделено не менее 8*n+7 байт
+
+|***********|***************|***************
+A        A-(8*n+7)      A-(x&(-16))
+
+-16 = 0xfffffffffffffffff0
+x & (-16) = sum(x_i + 2^i, i=[4, n))
+          = sum(x_i * 2^i, i = [0, n)) - sum(x_i * 2^i, i = [0, 4))
+
+B.
+  leaq 7(%rsp), %rax      # rax = rsp + 7
+  shrq $3, %rax           # rax = rax >> 3; rax = ceil(rsp/8)
+  leaq 0(,%rax,8), %r8    # r8 = 8*rax;     r8 = 8 * ceil(rsp/8)
+
+C.
+n  = 5
+s1 = 2,065 = 0x811
+s2 = 2,017 = 0x7e1
+p  = 2,024 = 0x7e8
+e1 = s1 - p = 2,065 - 2,024 = 41
+e2 = p - s2 = 2,024 - 2,017 = 7
+
+rax = 8*n + 22 = 8*5 + 22 = 62 = 0x3e
+rax = 0x3e & 0xf0 = 0x30
+rsp = 0x811 - 0x30 = 0x7e1
+
+rax = 0x7e1 + 7 = 0x7e8
+rax = 0x7e1 >> 3 = 0xfd
+r8  = rax*8 = 0xfd << 3 = 0x7e8
+
+
+n  = 6
+s1 = 2,064 = 0x810
+s2 = 2,000 = 0x7d0
+p  = 2,000 = 0x7d0
+e1 = s1 - p = 2,064 - 2,000 = 64
+e2 = p - s2 = 2,000 - 2,000 = 0
+
+rax = 8*n + 22 = 8*6 + 22 = 70 = 0x46
+rax = 0x46 & 0xf0 = 0x40
+rsp = 0x810 - 0x40 = 0x7d0
+
+rax = 0x7d0 + 7 = 0x7d7
+rax = 0x7d7 >> 3 = 0xfa
+r8  = rax*8 = 0xfa << 3 = 0x7d0
