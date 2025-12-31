@@ -1,0 +1,43 @@
+double simplefun(double x) {
+  return EXPR(x);
+}
+
+A.
+1.   vmovsd .LC1(%rip), %xmm1
+2.   vandpd  %xmm1, %xmm0, %xmm0
+3. .LC1:
+4.   .long 4294967295
+5.   .long 2147483647
+6.   .long 0
+7.   .long 0
+bin = 0x7F_FF_FF_FF_FF_FF_FF_FF
+EXPR: abs
+
+B.
+1. xorpd %xmm0, %xmm0, %xmm0
+EXPR: x = 0
+4294967295 = 0xFF_FF_FF_FF (low)
+2147483647 = 0x7F_FF_FF_FF (high)
+bin_val (little endian) = ff ff ff ff ff ff ff 7f
+bin_val (big endian)    = 7f ff ff ff ff ff ff ff
+EXPR absval
+
+B.
+1. xorpd %xmm0, %xmm0, %xmm0
+EXP: x = 0
+
+C.
+1.   vmovsd .LC2(%rip), %xmm1
+2.   vxorpd %xmm1, %xmm0, %xmm0
+3. .LC2:
+4.   .long 0
+5.   .long -2147483648
+6.   .long 0
+7.   .long 0
+8.   .long 0
+
+0 = 0x00_00_00_00 (low)
+-2147483648 = 0x80_00_00_00 (high)
+bin_val (little endian) = 0x00_00_00_00_00_00_00_80
+bin_val (big endian) = 0x80_00_00_00_00_00_00_00
+EXPR: -x
