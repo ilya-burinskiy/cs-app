@@ -1,0 +1,30 @@
+double simplefun(double x) {
+  return EXPR(x);
+}
+
+A.
+1.   vmovsd .LC1(%rip), %xmm1
+2.   vandpd  %xmm1, %xmm0, %xmm0
+3. .LC1:
+4.   .long 4294967295
+5.   .long 2147483647
+6.   .long 0
+7.   .long 0
+bin = 0x7F_FF_FF_FF_FF_FF_FF_FF
+EXPR: abs
+
+B.
+1. xorpd %xmm0, %xmm0, %xmm0
+EXPR: x = 0
+
+C.
+1.   vmovsd .LC2(%rip), %xmm1
+2.   vxorpd %xmm1, %xmm0, %xmm0
+3. .LC2:
+4.   .long 0
+5.   .long -2147483648
+6.   .long 0
+7.   .long 0
+8.   .long 0
+bin = 0x80_00_00_00_00_00_00_00
+EXPR: -x
