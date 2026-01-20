@@ -1,0 +1,163 @@
+x1 in rsp
+x2 in rsp+4
+x3 in rsp+8
+x4 in rsp+12
+x5 in rsp+16
+x6 in rsp+20
+
+
+  int x1, x2, x3, x4, x5, x6;
+  r13 = rsp;
+  rsi = rsp;
+  read_six_numbers(&x1, &x2, &x3, &x4, &x5, &x6);
+  r14 = rsp;
+  r12d = 0;
+
+.L32:
+  rbp = r13;
+  eax = M[r13] - 1;
+  if (eax > 5) explode_bomb();
+  r12d = r12d + 1;
+  if (r12d == 6) goto .L95;
+  ebx = r12d;
+
+.L65:
+  eax = M[rsp + 4*((long) ebx)];
+  if (M[rbp] == eax) explode_bomb();
+  ebx = ebx + 1;
+  if (ebx <= 5) goto .L65;
+
+  r13 = r13 + 4;
+  goto .L32;
+
+.L95:
+  rsi = M[rsp + 24];
+  rax = r14;
+  ecx = 7;
+.L108:
+  edx = ecx - M[rax];
+  M[rax] = edx;
+  rax = rax + 4;
+  if (rax != rsi) goto .L108;
+  esi = 0;
+  goto .L163;
+
+.L130:
+  rdx = M[rdx + 8];
+  eax = eax + 1;
+  if (eax != ecx) goto .L130;
+
+  goto .L148;
+.L143:
+  edx = 0x6032d0;
+.L148:
+  M[32 + rsp + 2*rsi] = rdx;
+  rsi = rsi + 4;
+  if (rsi == 24) goto .L183;
+.L163:
+  ecx= M[rsp + rsi];
+  if (ecx <= 1) goto .L143;
+  eax = 1;
+  edx = 0x6032d0;
+  goto .L130;
+
+.L183:
+  rbx = M[rsp + 32];
+  rax = rsp + 40;
+  rsi = rsp + 80;
+  rcx = rbx;
+.L201:
+  rdx = M[rax];
+  M[rcx + 8] = rdx;
+  rax = rax + 8;
+  if (rax == rsi) goto .L222;
+  rcx = rdx;
+  goto .L201;
+.L222:
+  M[rdx + 8] = 0;
+  ebx = 5;
+.L235:
+  rax = rbx + 8;
+  eax = M[rax];
+  if (M[rbx] < eax) explode_bomb();
+  rbx = M[rbx + 8];
+  ebp = ebp - 1;
+  if (ebp != 0) goto .L235;
+
+
+void phase_6(char *input) {
+  int x1, x2, x3, x4, x5, x6;
+  r13 = rsp;
+  rsi = rsp;
+  read_six_numbers(input, &x1, &x2, &x3, &x4, &x5, &x6);
+  r14 = rsp;
+  r12d = 0;
+
+  for (;;) {
+    rbp = r13;
+    eax = M[r13] - 1;
+    if (eax > 5) { explode_bomb(); }
+    r12d = r12d + 1;
+    if (r12d == 6) { break; }
+    ebx = r12d;
+    do {
+      eax = M[rsp + 4*((long) ebx)]; 
+      if (M[rbp] == eax) { explode_bomb(); }
+      ebx = ebx + 1;
+    } while (ebx <= 5);
+    r13 = r13 + 4;
+  }
+
+  rsi = M[rsp + 24];
+  rax = r14;
+  ecx = 7;
+  do {
+    edx = ecx - M[rax];
+    M[rax] = edx;
+    rax = rax + 4;
+  } while (rax != rsi);
+  esi = 0;
+  goto .L163;
+
+  for (;;) {
+    do {
+      rdx = M[rdx + 8];
+      eax = eax + 1;
+    } while (eax != ecx);
+    goto .L148;
+  .L143:
+    edx = 0x6032d0;
+  .L148:
+    M[32 + rsp + 2*rsi] = rdx;
+    rsi = rsi + 4;
+    if (rsi == 24) { break; }
+  .L163:
+    ecx = M[rsp + rsi];
+    if (ecx <= 1) goto .L143;
+    eax = 1;
+    edx = 0x6032d0;
+  }
+
+  rbx = M[rsp + 32];
+  rax = rsp + 40;
+  rsi = rsp + 80;
+  rcx = rbx;
+
+  for (;;) {
+    rdx = M[rax];
+    M[rcx + 8] = rdx;
+    rax = rax + 8;
+    if (rax == rsi) { break; }
+    rcx = rdx;
+  }
+
+  M[rdx + 8] = 0;
+  ebx = 5;
+  do {
+    rax = rbx + 8;
+    eax = M[rax];
+    if (M[rbx] < eax) explode_bomb();
+    rbx = M[rbx + 8];
+    ebp = ebp - 1;
+  } while (ebp != 0);
+}
