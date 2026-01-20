@@ -1,0 +1,72 @@
+# input in rdi
+phase_5:
+  push   %rbx                          # save rbx
+  sub    $0x20, %rsp                   # alloc 32 bytes
+  mov    %rdi,%rbx                     # rbx = rdi
+  mov    %fs:0x28,%rax                 # rax = fs:0x28
+  mov    %rax,0x18(%rsp)               # M[rsp + 24] = rax; set canary
+  xor    %eax,%eax                     # eax = 0
+  call   string_length                 # eax = string_length(input)
+  cmp    $0x6,%eax                     # eax:6
+  je     .L0                           # if eax == 6 goto .L0
+  # eax != 6
+  call   explode_bomb
+  jmp    .L0
+.L1:
+  movzbl (%rbx,%rax,1),%ecx            # ecx = (unsigned) M[rbx + rax]
+  mov    %cl,(%rsp)                    # M[rsp] = ecx[0]
+  mov    (%rsp),%rdx                   # rdx = M[rsp]
+  and    $0xf,%edx                     # edx = edx & 0xf
+  movzbl 0x4024b0(%rdx),%edx           # edx = (unsigned) M[rdx + 0x4024b0]
+  mov    %dl,0x10(%rsp,%rax,1)         # M[16 + rsp + rax] = edx[0]
+  add    $0x1,%rax                     # rax = rax + 1
+  cmp    $0x6,%rax                     # rax:6
+  jne    .L1                           # if rax != 6 goto .L1
+  movb   $0x0,0x16(%rsp)               # M[rsp + 22] = 0
+  mov    $0x40245e,%esi                # esi = 0x40245e
+  lea    0x10(%rsp),%rdi               # rdi = rsp + 16
+  call   strings_not_equal
+  test   %eax,%eax
+  je     .L2                           # if eax == 0 goto .L2; strings are equal
+  # strings are not equal
+  call   explode_bomb
+  nopl   0x0(%rax,%rax,1)
+  jmp    .L2
+.L0:
+  mov    $0x0,%eax                     # eax = 0
+  jmp    .L1
+.L2:
+  mov    0x18(%rsp),%rax               # rax = M[rsp + 24]
+  xor    %fs:0x28,%rax                 # canary check
+  je     .L3
+  call   __stack_chk_fail@plt
+.L3:
+  add    $0x20,%rsp
+  pop    %rbx
+  ret
+
+Loop 
+M[0x4024b0] = "maduiersnfotvbyl";
+input = "flyers"; // 0x66 0x6c 0x79 0x65 0x72 0x73
+rbx = &input[0];
+i = 0
+do {
+ M[rsp] = ((char *) ((unsgned) M[rbx + i]))[0];
+ edx = M[rsp] & 0xf;
+ edx = (unsiged) M[rdx + 0x4024b0];
+ M[rsp + i + 16] = edx[0];
+ ++i;
+} while (i != 6);
+
+M[rsp] = 0x66
+edx = 0x6
+
+0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+m  a  d  u  i  e  r  s  n  f  o  t  v  b  y  l
+expected string = "flyers"
+bias of 'f' is 9, so 0x79 = 'y'
+bias of 'l' is f, so 0x6f = 'o'
+bias of 'y' is e, so 0x7e = '~'
+bias of 'e' is 5, so 0x65 = 'u'
+bias of 'r' is 6, so 0x66 = 'f'
+bias of 's' is 7, so 0x77 = 'w'

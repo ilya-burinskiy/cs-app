@@ -1,0 +1,94 @@
+// x1 in rsp
+// x2 in rsp+4
+// x3 in rsp+8
+// x4 in rsp+12
+// x5 in rsp+16
+// x6 in rsp+20
+
+void phase_6(char *input) {
+  int x1, x2, x3, x4, x5, x6;
+  r13 = rsp;
+  rsi = rsp;
+  read_six_numbers(input, &x1, &x2, &x3, &x4, &x5, &x6);
+  r14 = rsp;
+
+  // xs are <= 6
+  // xs are unique
+  // 1 2 3 4 5 6
+  r12d = 0;
+  for (;;) {
+    rbp = r13;
+    if (M[r13] > 6) { explode_bomb(); }
+    r12d = r12d + 1;
+    if (r12d == 6) { break; }
+    ebx = r12d;
+    do {
+      eax = M[rsp + 4*((long) ebx)];
+      if (M[rbp] == eax) { explode_bomb(); }
+      ebx = ebx + 1;
+    } while (ebx <= 5);
+    r13 = r13 + 4;
+  }
+
+  rsi = M[rsp + 24];           // area over xs
+  rax = r14;                   // &x1
+  ecx = 7;
+  do {
+    edx = ecx - M[rax];        // 7 - x1
+    M[rax] = edx;              // x
+    rax = rax + 4;
+  } while (rax != rsi);
+  esi = 0;
+  // 6, 5, 4, 3, 2, 1
+  goto .L163;
+
+  for (;;) {
+    do {
+      rdx = M[rdx + 8];
+      eax = eax + 1;
+    } while (eax != ecx);
+    goto .L148;
+  .L143:
+    edx = 0x6032d0;
+  .L148:
+    M[32 + rsp + 2*rsi] = rdx;
+    rsi = rsi + 4;
+    if (rsi == 24) { break; }
+  .L163:
+    ecx = M[rsp + rsi];
+    if (ecx <= 1) goto .L143;
+    eax = 1;
+    edx = 0x6032d0;
+  }
+  /*
+   * M[32 + rsp + 0] = &node6
+   * M[32 + rsp + 8] = &node5
+   * M[32 + rsp + 16] = &node4
+   * M[32 + rsp + 24] = &node3
+   * M[32 + rsp + 32] = &node2
+   * M[32 + rsp + 40] = &node1
+   */
+
+  rbx = M[rsp + 32];
+  rax = rsp + 40;
+  rsi = rsp + 80;
+  rcx = rbx;
+
+  // reverse linked list
+  for (;;) {
+    rdx = M[rax];
+    M[rcx + 8] = rdx; // 
+    rax = rax + 8;
+    if (rax == rsi) { break; }
+    rcx = rdx;
+  }
+
+  M[rdx + 8] = 0;
+  ebp = 5;
+  do {
+    eax = M[rbx + 8];
+    if (M[rbx] < eax) explode_bomb();
+    rbx = M[rbx + 8];
+    ebp = ebp - 1;
+  } while (ebp != 0);
+}
