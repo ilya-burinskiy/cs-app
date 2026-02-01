@@ -1,0 +1,36 @@
+.pos 0x100
+  irmovq $15, %rbx           # bias 0x0,  addr = 0x100
+  rrmovq %rbx, %rcx          # bias 0xA,  addr = 0x10A
+loop:
+  rmmovq %rcx, -3(%rbx)      # bias 0xC,  addr = 0x10C
+  addq %rbx, %rcx            # bias 0x16, addr = 0x116
+  jmp loop                   # bias 0x18, addr = 0x118
+
+
+irmovq V, rB: 0x30F[rB][V]
+V  = 0x000000000000000F
+V' = 0x0F00000000000000
+rB = 3
+irmovq 15, rB: 0x30F30F00000000000000 (10 bytes)
+
+rrmovq rA, rB: 0x20[rA][rB]
+rA = 3
+rB = 1
+rrmovq rA, rB: 0x2031 (2 bytes)
+
+rmmovq rA, D(rB): 0x40[rA][rB][D]
+rA = 1
+rB = 3
+D  = 0xFFFFFFFFFFFFFFFD
+D' = 0xFDFFFFFFFFFFFFFF
+rmmovq rA, D(rB): 0x4013FDFFFFFFFFFFFFFF (10 bytes)
+
+addq rA, rB: 0x60[rA][rB]
+rA = 3
+rB = 1
+addq rA, rB: 0x6031 (2 bytes)
+
+jmp D: 0x70[D]
+D  = 0x000000000000010C
+D' = 0x0C01000000000000
+jmp D: 0x700C01000000000000
