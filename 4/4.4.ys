@@ -13,35 +13,24 @@ array:
 main:
   irmovq array, %rdi
   irmovq $4, %rsi
-  call mult 
+  call product
   ret
 
 product:
   irmovq $1, %rax         # rax = 1
-  andq %rsi, %rsi
-  je product_done         # if n == 0 goto done
+  subq %rax, %rsi         # n = n - 1
+  jl product_done         # if n < 0 goto done
   mrmovq (%rdi), %rdx     # rdx = *arr
   irmovq $8, %rcx         # rcx = 8
   addq %rcx, %rdi         # arr = arr + 8
-  subq %rax
+  pushq %rdx              # save *arr
   call product            # rax = product(arr + 8, n - 1)
-  rrmovq %rax, %rdi       # rdi = rax
-  rrmovq %rdx, %rsi       # rsi = *arr
-  call mult               # rax = *arr * product(arr + 8, n - 1)
+  popq %rdi
+  rrmovq %rax, %rsi
+  call mult
 product_done:
   ret
 
-# 7 * 2 = 7 + 7
-# a in rdi
-# b in rsi
-# if (a == 0 || b == 0) { return 0; }
-# res = a
-# b = b - 1
-# while (b != 0) {
-#   res = res + a;
-#   b--
-# }
-# return res;
 mult:
   irmovq $0, %rax         # res = 0
   andq %rdi, %rdi        # test a
