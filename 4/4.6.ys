@@ -1,0 +1,39 @@
+  .pos 0
+  irmovq stack, %rsp
+  call main
+  halt
+
+  .align 8
+array:
+  .quad 0xffffffffffffffff
+  .quad 0xfffffffffffffffe
+  .quad 0xfffffffffffffffd
+  .quad 0xfffffffffffffffc
+
+main:
+  irmovq array, %rdi
+  irmovq $4, %rsi
+  call sum
+  ret
+
+sum:
+  irmovq $8, %r8         # r8 = 8
+  irmovq $1, %r9         # r9 = 1
+  xorq %rax, %rax        # rax = 0
+  andq %rsi, %rsi        # rsi & rsi
+  jmp test               # if rsi == 0 goto done
+loop:
+  mrmovq (%rdi), %r11    # r11 = *start
+  rrmovq %r11, %r12      # r12 = *start
+  xorq %r10, %r10        # r10 = 0
+  subq %r12, %r10        # r10 = -(*start)
+  cmovg %r10, %r11       # r11 = r10 if (-(*start) > 0) => *start < 0
+  addq %r11, %rax
+  addq %r8, %rdi
+  subq %r9, %rsi
+test:
+  jne loop
+  ret
+
+  .pos 0x200
+stack:
