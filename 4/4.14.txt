@@ -1,0 +1,45 @@
+irmovq $9, %rdx
+irmovq $21, %rbx
+subq %rdx, %rbx        # rbx = 12
+irmovq $128, %rsp      # rsp = 128
+rmmovq %rsp, 100(%rbx) # M[112] = 128
+pushq %rdx             # rsp = 120
+popq %rax
+
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC + 1]
+  valP <- PC + 2
+Decode:
+  valA <- R[%rsp]
+  valB <- R[%rsp]
+Execute:
+  valE <- valB + 8
+Memory:
+  valM <- M_8[valA]
+Write back:
+  R[%rsp] <- valE
+  R[rA] <- valM
+PC update:
+  PC <- valP
+
+Fetch:
+  icode:ifun <- M_1[0x02C] = B:0
+  rA:rB <- M_1[0x02D] = 0:F
+  valP <- 0x02E
+Decode:
+  valA <- R[%rsp] = 0x78
+  valB <- R[%rsp] = 0x78
+Execute:
+  valE <- valB + 8 = 0x80
+Memory
+  valM <- M_8[valA] = M_8[0x78] = 9
+Write back:
+  R[%rsp] <- valE = 0x80
+  R[%rax] <- 9
+PC update:
+  PC <- 0x02E
+
+PC:   0x02A -> 0x02E
+%rsp: 0x78  -> 0x80
+%rax: ?     -> 9
