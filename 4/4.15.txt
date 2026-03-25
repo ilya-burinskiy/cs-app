@@ -1,0 +1,18 @@
+pushq rA
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC + 1]
+  valP <- PC + 2
+Decode:
+  valA <- R[%rsp]
+  valB <- R[%rsp]
+Execute:
+  valE <- valB + (-8)
+Memory:
+  M_8[valE] <- valA
+Write back:
+  R[%rsp] <- valE
+PC update:
+  PC <- valP
+
+Value before increment is pushed on stack
