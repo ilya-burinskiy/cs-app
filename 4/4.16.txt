@@ -1,0 +1,19 @@
+popq rA
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC + 1]
+  valP <- PC + 2
+Decode:
+  valA <- R[%rsp]
+  valB <- R[%rsp]
+Execute:
+  valE <- valB + 8
+Memory:
+  valM <- M[valA] # read value from stack top
+Write back:
+  R[%rsp] <- valE # set stack to incremented value
+  R[rA] <- valM   # set register rA to value from stack top
+PC update:
+  PC <- valP
+
+If rA is %rsp, then value from stack top overwrites incremented stack pointer.
