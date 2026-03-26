@@ -1,0 +1,17 @@
+cmmovXX rA, rB
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC]
+  valP <- PC + 2
+Decode:
+  valA <- R[rA]
+  (-) valB <- R[rB]
+Execute:
+  valE <- 0 + valA
+  Cnd <- Cond(CC, ifun)
+Memory:
+Write back:
+  (-) R[rB] <- Cnd ? valE : valB
+  (+) if (Cnd) R[rB] <- valE
+PC update:
+  PC <- valP
