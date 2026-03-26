@@ -1,0 +1,35 @@
+call Dest
+Fetch:
+  icode:ifun <- M_1[PC]
+  valC <- M_8[PC + 1]
+  valP <- PC + 9
+Decode:
+  valB <- R[%rsp]
+Execute:
+  valE <- valB + (-8)
+Memory:
+  M_8[valE] = valP
+Write back:
+  R[%rsp] <- valE
+PC update:
+  PC <- valC
+
+call 0x041
+Fetch:
+  icode:ifun <- M_1[0x037] = 8:0
+  valC <- M_8[0x038] = 0x041
+  valP <- PC + 9 = 0x040
+Decode:
+  valB <- R[%rsp] = 128
+Execute:
+  valE <- valB + (-8) = 120
+Memory:
+  M_8[120] <- valP = 0x040     # return address
+Write back:
+  R[%rsp] <- valE = 120        # set stack pointer to return addr
+PC update:
+  PC <- valC                   # set PC to 0x041
+
+%rsp:     128   -> 120
+PC:       0x037 -> 0x041
+M_8[120]: 9     -> 0x040
