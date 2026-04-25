@@ -1,0 +1,19 @@
+A.
+After 'C' stage:
+Throughput = 1/190*1000 = 5.26 GIPS
+Latency = 2*190 = 380 ps
+
+B.
+After 'B' and 'D' stages:
+Throughput = 1/130*1000 = 7.69 GIPS
+Latency = 3*130 = 390 ps
+
+C.
+After 'A', 'C', 'D' stages:
+Throughput = 1/110*1000 = 9.01 GIPS
+Latency = 4*110 = 440 ps
+
+D.
+After 'A', 'B', 'C', 'D' stages:
+Throughput = 1/100 * 1000 = 10 GIPS
+Latency = 5*100 = 500 ps
