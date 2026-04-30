@@ -1,0 +1,171 @@
+word d_valA = [
+  D_icode in { ICALL, IJXX } : D_valP; # Use incremented PC
+  d_srcA == e_dstE : e_valE; # Forward valE from execute
+  d_srcA == M_dstM : m_valM; # Forward valM from memory
+  d_srcA == M_dstE : M_valE; # Forward valE from memory
+  d_srcA == W_dstM : W_valM; # Forward valM from write back
+  d_srcA == W_dstE : W_valE; # Forward valE from write back
+  1 : d_rvalA;
+];
+rrmovq rA, rB
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC+1]
+  valP <- PC+2
+Decode:
+  valA <- R[rA]
+Execute:
+  valE <- 0+valA
+Memory:
+Write back:
+  R[rB] <- valE
+PC update:
+  PC <- valP
+
+rmmvoq rA, D(rB)
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC+1]
+  valC <- M_8[PC+2]
+  valP <- PC+10
+Decode:
+  valA <- R[rA]
+  valB <- R[rB]
+Execute:
+  valE <- valB+valC
+Memory:
+  M_8[valE] <- valA
+Write back:
+PC update:
+  PC <- valP
+
+irmovq V, rB
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC+1]
+  valC <- M_8[PC+2]
+  valP <- PC+10
+Decode:
+Execute:
+  valE <- 0+valC
+Memory:
+Write back:
+  R[rB] <- valE
+PC update:
+  PC <- valP
+
+popq rA
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC+1]
+  valP <- PC + 2
+Decode:
+  valA <- R[%rsp]
+  valB <- R[%rsp]
+Execute:
+  valE <- valB + 8
+Memory:
+  valM <- M_8[valA]
+Write back:
+  R[%rsp] <- valE
+  R[rA] <- valM
+PC update:
+  PC <- valP
+
+irmovq $5, %rdx
+irmovq $0x100, %rsp
+rmmovq %rdx, 0(%rsp)
+popq %rsp
+rrmovq %rsp, %rax
+
+1 cycle:
+irmovq $5, %rdx      [F]
+  rB = %rdx
+  valC = 5
+
+2 cycle:
+irmovq $5, %rdx      [D]
+  D_dstE = %rdx
+irmovq $0x100, %rsp  [F]
+  rB = %rsp
+  valC = 0x100
+
+3 cycle:
+irmovq $5, %rdx      [E]
+  e_valE = 5
+  E_dstE = %rdx
+irmovq $0x100, %rsp  [D]
+  D_dstE = %rsp
+rmmovq %rdx, 0(%rsp) [F]
+  rA = %rdx
+  rB = %rsp
+  valC = 0
+
+4 cycle:
+irmovq $5, %rdx                [M]
+  M_valE = 5
+  M_dstE = %rdx
+irmovq $0x100, %rsp            [E]
+  E_dstE = %rsp
+  e_valE = 0x100
+rmmovq %rdx, 0(%rsp)           [D]
+  # srcA = M_dstE = %rdx
+  valA = R[%rdx] = M_dstE = 5  
+  # srcB = E_dstE = %rsp
+  valB = R[%rsp] = e_valE = 0x100
+  valC = 0
+popq %rsp                      [F]
+  rA = %rsp
+
+5 cycle
+irmovq $5, %rdx       [W]
+  W_dstE = %rdx
+  W_valE = 5
+irmovq $0x100, %rsp   [M]
+  M_valE = 0x100
+  M_dstE = %rsp
+rmmovq %rdx, 0(%rsp)  [E]
+  e_valE = 0x100
+  E_valA = 5
+popq %rsp             [D]
+  # srcA = srcB = M_dstE = %rsp
+  valA = R[%rsp] = M_valE = 0x100
+  valB = R[%rsp] = M_valE = 0x100
+  dstM = %rsp
+  dstE = %rsp
+rrmovq %rsp, %rax     [F]
+  rA = %rsp
+  rB = %rax
+
+6 cycle:
+irmovq $0x100, %rsp   [W]
+  W_dstE = %rsp
+  W_valE = 0x100
+rmmovq %rdx, 0(%rsp)  [M]
+  M_8[0x100] = 5
+popq %rsp             [E]
+  e_valE = 0x108
+  E_dstE = %rsp
+  E_dstM = %rsp
+  E_valA = 0x100
+  E_valB = 0x100
+rrmovq %rsp, %rax     [D]
+  valA = R[%rsp] # stall
+  valB = R[%rsp] # stall
+
+7 cycle:
+rmmovq %rdx, 0(%rsp)  [W]
+popq %rsp             [M]
+  m_valM = M_8[E_valA] = M_8[0x100] = 5
+  M_dstE = %rsp
+  M_valE = 0x108
+  M_valM = 5
+  M_dstM = %rsp
+rrmovq %rsp, %rax     [D]
+  srcA = %rsp
+  srcB = %rax
+  # srcA = M_dstM = M_dstE. if third and fourth cases are reversed, then
+  # valA would be M_valE = 0x108. This violates policy that, value read from memory
+  # would be saved in rsp
+  valA = M_valE = 0x108
+  valB = R[%rax]
