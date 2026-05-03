@@ -1,0 +1,69 @@
+irmovq $5, %rdx
+irmovq $0x100, %rsp
+rmmovq %rdx, 0(%rsp)
+popq %rsp
+nop
+nop
+rrmovq %rsp, %rax
+
+...
+5 cycle
+irmovq $5, %rdx       [W]
+  W_dstE = %rdx
+  W_valE = 5
+irmovq $0x100, %rsp   [M]
+  M_valE = 0x100
+  M_dstE = %rsp
+rmmovq %rdx, 0(%rsp)  [E]
+  e_valE = 0x100
+  E_valA = 5
+popq %rsp             [D]
+  # srcA = srcB = M_dstE = %rsp
+  valA = R[%rsp] = M_valE = 0x100
+  valB = R[%rsp] = M_valE = 0x100
+  dstM = %rsp
+  dstE = %rsp
+nop                   [F]
+
+6 cycle:
+irmovq $0x100, %rsp   [W]
+  W_dstE = %rsp
+  W_valE = 0x100
+rmmovq %rdx, 0(%rsp)  [M]
+  M_8[0x100] = 5
+popq %rsp             [E]
+  e_valE = 0x108
+  E_dstE = %rsp
+  E_dstM = %rsp
+  E_valA = 0x100
+  E_valB = 0x100
+nop                   [D]
+nop                   [F]
+
+7 cycle:
+rmmovq %rdx, 0(%rsp)  [W]
+popq %rsp             [M]
+  m_valM = M_8[E_valA] = M_8[0x100] = 5
+  M_dstE = %rsp
+  M_valE = 0x108
+  M_valM = 5
+  M_dstM = %rsp
+nop                   [E]
+nop                   [D]
+rrmovq %rsp, %rax     [F]
+  rA = %rsp
+  rB = %rax
+
+8 cycle:
+popq %rsp             [W]
+  W_dstE = %rsp
+  W_valE = 0x108
+  W_valM = 5
+  W_dstM = %rsp
+nop                   [M]
+nop                   [E]
+rrmovq %rsp, %rax     [D]
+  # if fifth and sixth cases were swapped, than in valA would be incremented
+  # rsp pointer, this violates policy that, value read from memory would be saved in rsp
+  valA = W_valE = 0x108
+  valB = R[%rax]
