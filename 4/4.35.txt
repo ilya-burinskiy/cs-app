@@ -1,0 +1,141 @@
+irmovq $0x123, %rax
+irmovq $0x321, %rdx
+xorq %rcx, %rcx
+cmovne %rax, %rdx   # ZF != 0
+addq %rdx, %rdx
+halt
+
+CC: {ZF, SF, OF}
+
+OPq rA, rB
+Fetch:
+  icode:ifun <- M_1[PC]
+  rA:rB <- M_1[PC+1]
+  valP <- PC+2
+Decode:
+  valA <- R[rA]
+  valB <- R[rB]
+Execute:
+  valE <- valB OP valA
+  Set CC
+Memory:
+Write back:
+  if Cnd
+    R[rB] <- valE
+PC update:
+  PC <- valP
+
+cycle 1:
+irmovq $0x123, %rax      [F]  
+
+cycle 2:
+irmovq $0x123, %rax      [D]
+  dstE = %rax
+irmovq $0x321, %rdx      [F]
+
+# At the beginning of cycle 3:
+# E_dstE = %rax;
+cycle 3:
+irmovq $0x123, %rax    [E]
+  e_valE = 0x123
+  e_dstE = %rax
+irmovq $0x321, %rdx    [D]
+  dstE = %rdx
+xorq %rcx, %rcx        [F]
+
+# At the beginning of cycle 4:
+# E_dstE = %rdx;
+cycle 4:
+irmovq $0x123, %rax    [M]
+  M_valE = 0x123
+  M_dstE = %rax
+irmovq $0x321, %rdx    [E]
+  e_valE = 0x321
+  e_dstE = %rdx
+xorq %rcx, %rcx        [D]
+  valA = R[%rcx]
+  valB = R[%rcx]
+  dstE = %rcx
+cmovne %rax, %rdx      [F]
+
+# At the beginning of cycle 5:
+# E_dstE = %rcx;
+cycle 5:
+irmovq $0x123, %rax    [W]
+  W_valE = 0x123
+  W_dstE = %rax
+irmovq $0x321, %rdx    [M]
+  M_valE = 0x321
+  M_dstE = %rdx
+xorq %rcx, %rcx        [E]
+  e_valE = 0
+  e_dstE = %rcx
+  CC = (1, 0, 0)
+cmovne %rax, %rdx      [D]
+  valA = R[%rax] = W_valE = 0x123 (forwarded)
+  dstE = %rdx
+addq %rdx, %rdx        [F]
+
+# At the beginning of cycle 6:
+# E_dstE = %rdx;
+cycle 6:
+irmovq $0x321, %rdx    [W]
+  W_valE = 0x321
+  W_dstE = %rdx
+xorq %rcx, %rcx        [M]
+  M_valE = 0
+  M_dstE = %rcx
+cmovne %rax, %rdx      [E]
+  CC = (1, 0, 0)
+  e_cnd = 0
+  e_valE = 0x123
+  # because e_cnd is zero. 0x123 would not be written in %rdx
+  e_dstE = RNONE
+addq %rdx, %rdx        [D]
+  # d_srcA == E_dstE and e_valE is forwarded
+  valA = R[%rdx] = 0x123
+  # d_srB == E_dstE and e_valE is forwarded
+  valB = R[%rdx] = 0x123
+  dstE = %rdx
+halt                   [F]
+
+# At the beginning of cycle 7:
+# E_dstE = %rdx;
+cycle 7:
+xorq %rcx, %rcx        [W]
+  W_valE = 0
+  W_dstE = %rcx
+cmovne %rax, %rdx      [M]
+  M_valE = 0x123
+  M_dstE = RNONE
+addq %rdx, %rdx        [E]
+  valE = E_valA + E_valB = 0x246
+halt                   [D]
+
+В ответе получается 0x444, но если запустить эмулятор с использованием E_dstE, то получается 0x246
+Cycle 6. CC=Z=1 S=0 O=0, Stat=AOK
+F: predPC = 0x1b
+D: instr = halt, rA = ----, rB = ----, valC = 0x0, valP = 0x1b, Stat = HLT
+E: instr = addq, valC = 0x0, valA = 0x123, valB = 0x123
+   srcA = %rdx, srcB = %rdx, dstE = %rdx, dstM = ----, Stat = AOK
+M: instr = cmovne, Cnd = 0, valE = 0x123, valA = 0x123
+   dstE = ----, dstM = ----, Stat = AOK
+W: instr = xorq, valE = 0x0, valM = 0x0, dstE = %rcx, dstM = ----, Stat = AOK
+	Fetch: f_pc = 0x1b, imem_instr = halt, f_instr = halt
+	Execute: ALU: + 0x123 0x123 --> 0x246
+	Execute: New cc = Z=0 S=0 O=0
+	Writeback: Wrote 0x0 to register %rcx
+
+Этот же цикл, но с использованием e_dstE
+Cycle 6. CC=Z=1 S=0 O=0, Stat=AOK
+F: predPC = 0x1b
+D: instr = halt, rA = ----, rB = ----, valC = 0x0, valP = 0x1b, Stat = HLT
+E: instr = addq, valC = 0x0, valA = 0x321, valB = 0x321
+   srcA = %rdx, srcB = %rdx, dstE = %rdx, dstM = ----, Stat = AOK
+M: instr = cmovne, Cnd = 0, valE = 0x123, valA = 0x123
+   dstE = ----, dstM = ----, Stat = AOK
+W: instr = xorq, valE = 0x0, valM = 0x0, dstE = %rcx, dstM = ----, Stat = AOK
+	Fetch: f_pc = 0x1b, imem_instr = halt, f_instr = halt
+	Execute: ALU: + 0x321 0x321 --> 0x642
+	Execute: New cc = Z=0 S=0 O=0
+	Writeback: Wrote 0x0 to register %rcx
