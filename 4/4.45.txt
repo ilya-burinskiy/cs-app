@@ -1,0 +1,8 @@
+pushq REG equivalent to code sequence
+subq $8, %rsp
+movq REG, (%rsp)
+
+A. This sequence produce wrong result for pushq %rsp. it pushes decremented value of rsp
+B.
+  movq REG, -8(%rsp)
+  subq $8, %rsp
