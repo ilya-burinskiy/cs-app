@@ -1,0 +1,10 @@
+pushq REG equivalent to code sequence
+subq $8, %rsp
+movq REG, (%rsp)
+
+A. This sequence produce wrong result for pushq %rsp. it pushes decremented value of rsp
+B.
+
+tmp = REG == %rsp ? R[%rsp] : R[REG]
+R[rsp] = R[rsp] - 8
+M[R[rsp]] = tmp
